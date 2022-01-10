@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const { cpus } = require("os")
 const morgan = require("morgan")
+const helmet = require("helmet")
 const cluster = require("cluster")
 const nocache = require("nocache")
 const process = require("process")
@@ -10,7 +11,7 @@ const bodyParser = require("body-parser")
 const compression = require("compression")
 const fileUpload = require("express-fileupload")
 require("dotenv").config()
-// const RouteV1 = require("./api/routes")
+const route_v1 = require("./api/routes")
 
 const numCPUs = cpus().length
 
@@ -34,9 +35,10 @@ if (cluster.isMaster) {
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(nocache())
+    app.use(helmet())
 
-    // API Routes
-    // app.use("/api/auth/v1", RouteV1)
+    /* API routes */
+    app.use("/api/auth-service/v1", route_v1)
 
     app.get('/', (req, res) => {
         res.send("Auth service.")
@@ -83,7 +85,6 @@ if (cluster.isMaster) {
         })
 
     // App Port
-    const port = process.env.PORT || 5000
+    const port = process.env.PORT || 4000
     app.listen(port, () => console.log(`App running on ${port} port`))
-
 }

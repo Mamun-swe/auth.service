@@ -21,7 +21,7 @@ const register = async (req, res, next) => {
         /* match existing account */
         const is_exist_account = await user.findOne({ phone })
         if (is_exist_account) {
-            return res.status(408).json({
+            return res.status(409).json({
                 status: false,
                 message: "Phone number already used."
             })
@@ -30,7 +30,7 @@ const register = async (req, res, next) => {
         /* generate hash password */
         const hash_password = await bcrypt.hash(password, 10)
 
-        const new_user = new User({
+        const new_user = new user({
             name,
             phone,
             is_online: true,
@@ -55,12 +55,15 @@ const register = async (req, res, next) => {
             }, process.env.JWT_SECRET, { expiresIn: '1d' }
         )
 
-        return res.status(200).json({
+        return res.status(201).json({
             status: true,
             token
         })
     } catch (error) {
-        if (error) next(error)
+        if (error) {
+            console.log(error)
+            next(error)
+        }
     }
 }
 

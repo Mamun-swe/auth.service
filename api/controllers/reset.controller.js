@@ -91,7 +91,7 @@ const updatePassword = async (req, res, next) => {
         }
 
         /* generate hash password */
-        const hash_password = await bcrypt.hash(password, 10)
+        const hash_password = await bcrypt.hash(new_password, 10)
 
         /* Update online status */
         const is_update_password = await user.findByIdAndUpdate(is_matched._id, { $set: { password: hash_password } })
