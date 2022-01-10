@@ -1,15 +1,15 @@
 
 const bcrypt = require("bcryptjs")
-const User = require("../../models/user.model")
-const Validator = require("../validators/auth.validator")
+const user = require("../../models/user.model")
+const validator = require("../validators/auth.validator")
 
-/* Password reset controller */
-const Reset = async (req, res, next) => {
+/* Password reset */
+const reset = async (req, res, next) => {
     try {
         const { phone } = req.body
 
         /* Check validity */
-        const validate = await Validator.Reset(req.body)
+        const validate = await validator.reset(req.body)
         if (!validate.isValid) {
             return res.status(422).json({
                 status: false,
@@ -18,30 +18,30 @@ const Reset = async (req, res, next) => {
         }
 
         /* find account */
-        const is_available = await User.findOne({ phone })
+        const is_available = await user.findOne({ phone })
         if (!is_available) {
             return res.status(404).json({
                 status: false,
-                message: "Account not find."
+                message: "Account not found."
             })
         }
 
         res.status(200).json({
             status: false,
-            message: "Password will sent your phone number."
+            message: "Check your phone an OTP code send."
         })
     } catch (error) {
         if (error) next(error)
     }
 }
 
-/* OTP verify controller */
-const Update = async (req, res, next) => {
+/* OTP verify */
+const verifyOtp = async (req, res, next) => {
     try {
-        const { phone, otp, new_password } = req.body
+        const { phone, otp } = req.body
 
         /* Check validity */
-        const validate = await Validator.Update(req.body)
+        const validate = await validator.verifyOtp(req.body)
         if (!validate.isValid) {
             return res.status(422).json({
                 status: false,
@@ -50,7 +50,39 @@ const Update = async (req, res, next) => {
         }
 
         /* find matched account with phone & OTP */
-        const is_matched = await User.findOne({ $and: [{ phone }, { otp }] })
+        const is_matched = await user.findOne({ $and: [{ phone }, { otp }] })
+        if (!is_matched) {
+            return res.status(404).json({
+                status: false,
+                message: "OTP doesn't match."
+            })
+        }
+
+        res.status(200).json({
+            status: true,
+            message: "OTP matched."
+        })
+    } catch (error) {
+        if (error) next(error)
+    }
+}
+
+/* Update password */
+const updatePassword = async (req, res, next) => {
+    try {
+        const { phone, otp, new_password } = req.body
+
+        /* Check validity */
+        const validate = await validator.update(req.body)
+        if (!validate.isValid) {
+            return res.status(422).json({
+                status: false,
+                message: validate.error
+            })
+        }
+
+        /* find matched account with phone & OTP */
+        const is_matched = await user.findOne({ $and: [{ phone }, { otp }] })
         if (!is_matched) {
             return res.status(404).json({
                 status: false,
@@ -62,7 +94,7 @@ const Update = async (req, res, next) => {
         const hash_password = await bcrypt.hash(password, 10)
 
         /* Update online status */
-        const is_update_password = await User.findByIdAndUpdate(is_matched._id, { $set: { password: hash_password } })
+        const is_update_password = await user.findByIdAndUpdate(is_matched._id, { $set: { password: hash_password } })
         if (!is_update_password) {
             return res.status(500).json({
                 status: false,
@@ -80,6 +112,7 @@ const Update = async (req, res, next) => {
 }
 
 module.exports = {
-    Reset,
-    Update
+    reset,
+    verifyOtp,
+    updatePassword
 }

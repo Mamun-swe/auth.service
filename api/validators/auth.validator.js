@@ -2,7 +2,7 @@
 const { isEmpty, isPhone } = require("../helpers")
 
 /* Register validator */
-const Register = data => {
+const register = data => {
     let error = {}
 
     if (!data.name || isEmpty(data.name)) error.name = "Name is required."
@@ -17,7 +17,7 @@ const Register = data => {
 }
 
 /* Login validator */
-const Login = data => {
+const login = data => {
     let error = {}
 
     if (!data.phone || isEmpty(data.phone)) error.phone = "Phone is required."
@@ -31,7 +31,7 @@ const Login = data => {
 }
 
 /* Reset */
-const Reset = data => {
+const reset = data => {
     let error = {}
 
     if (!data.phone || isEmpty(data.phone)) error.phone = "Phone is required."
@@ -43,8 +43,22 @@ const Reset = data => {
     }
 }
 
+/* Verify OTP */
+const verifyOtp = data => {
+    let error = {}
+
+    if (!data.phone || isEmpty(data.phone)) error.phone = "Phone is required."
+    if (data.phone && !isPhone(data.phone)) error.phone = "Phone number isn't valid"
+    if (!data.otp || isEmpty(data.otp)) error.otp = "OTP is required."
+
+    return {
+        error,
+        isValid: Object.keys(error).length === 0
+    }
+}
+
 /* Update password */
-const Update = data => {
+const update = data => {
     let error = {}
 
     if (!data.phone || isEmpty(data.phone)) error.phone = "Phone is required."
@@ -60,8 +74,9 @@ const Update = data => {
 
 
 module.exports = {
-    Login,
-    Register,
-    Reset,
-    Update
+    login,
+    register,
+    reset,
+    verifyOtp,
+    update
 }

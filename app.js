@@ -54,15 +54,18 @@ if (cluster.isMaster) {
                 message: error.message
             })
         }
+
         if (error.status == 400) {
             return res.status(400).json({
                 message: "Bad request"
             })
         }
+
         if (error.status == 401) {
             return res.status(401).json({
             })
         }
+
         return res.status(500).json({
             message: "Internal Server Error"
         })
@@ -81,8 +84,6 @@ if (cluster.isMaster) {
 
     // App Port
     const port = process.env.PORT || 5000
-    app.listen(port, () => {
-        console.log(`App running on ${port} port`)
-    })
+    app.listen(port, () => console.log(`App running on ${port} port`))
 
 }

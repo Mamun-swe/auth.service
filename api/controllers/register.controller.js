@@ -1,16 +1,16 @@
 
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const User = require("../../models/user.model")
-const Validator = require("../validators/auth.validator")
+const user = require("../../models/user.model")
+const validator = require("../validators/auth.validator")
 
 /* Regster controller */
-const Register = async (req, res, next) => {
+const register = async (req, res, next) => {
     try {
         const { name, phone, password } = req.body
 
         /* Check validity */
-        const validate = await Validator.Register(req.body)
+        const validate = await validator.register(req.body)
         if (!validate.isValid) {
             return res.status(422).json({
                 status: false,
@@ -19,7 +19,7 @@ const Register = async (req, res, next) => {
         }
 
         /* match existing account */
-        const is_exist_account = await User.findOne({ phone })
+        const is_exist_account = await user.findOne({ phone })
         if (is_exist_account) {
             return res.status(408).json({
                 status: false,
@@ -65,4 +65,4 @@ const Register = async (req, res, next) => {
 }
 
 
-module.exports = { Register }
+module.exports = { register }

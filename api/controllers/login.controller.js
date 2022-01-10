@@ -1,16 +1,16 @@
 
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const User = require("../../models/user.model")
-const Validator = require("../validators/auth.validator")
+const user = require("../../models/user.model")
+const validator = require("../validators/auth.validator")
 
 /* Login controller */
-const Login = async (req, res, next) => {
+const login = async (req, res, next) => {
     try {
         const { phone, password } = req.body
 
         /* Check validity */
-        const validate = await Validator.Login(req.body)
+        const validate = await validator.login(req.body)
         if (!validate.isValid) {
             return res.status(422).json({
                 status: false,
@@ -19,7 +19,7 @@ const Login = async (req, res, next) => {
         }
 
         /* Account find using phone */
-        const account = await User.findOne({ phone })
+        const account = await user.findOne({ phone })
         if (!account) {
             return res.status(404).json({
                 status: false,
@@ -54,7 +54,7 @@ const Login = async (req, res, next) => {
         )
 
         /* Update online status */
-        const is_update_online = await User.findByIdAndUpdate(account._id, { $set: { is_online: true } })
+        const is_update_online = await user.findByIdAndUpdate(account._id, { $set: { is_online: true } })
         if (!is_update_online) {
             return res.status(500).json({
                 status: false,
@@ -72,4 +72,4 @@ const Login = async (req, res, next) => {
 }
 
 
-module.exports = { Login }
+module.exports = { login }
