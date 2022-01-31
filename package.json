@@ -15,6 +15,7 @@
   "author": "Abdullah Al Mamun",
   "license": "ISC",
   "dependencies": {
+    "@grpc/proto-loader": "^0.6.9",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "compression": "^1.7.4",
@@ -22,6 +23,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "express-fileupload": "^1.2.1",
+    "grpc": "^1.24.11",
     "helmet": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.4",

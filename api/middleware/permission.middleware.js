@@ -10,6 +10,7 @@ const isUser = async (req, res, next) => {
         const splitToken = await req.headers.authorization.split(' ')[1]
         const decode = await jwt.verify(splitToken, process.env.JWT_SECRET)
         req.user = decode
+        
         next()
 
     } catch (error) {
